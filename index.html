@@ -56,8 +56,9 @@
         </header>
 
         <div id="map" class="map" tabindex="0" aria-label="Forest map. Use arrow keys or WASD to move Little Red Riding Hood.">
-          <img class="map-image" src="assets/forest-map.png" alt="A single winding road through the forest from Little Red Riding Hood's home to grandmother's cottage.">
-          <svg class="map-drawing" viewBox="0 0 1400 650" preserveAspectRatio="none" role="img" aria-label="A hand-drawn coded map showing Little Red Riding Hood's route from home, through the forest and flowers, to grandmother's cottage.">
+          <div id="mapWorld" class="map-world">
+            <img class="map-image" src="assets/forest-map.png" alt="A single winding road through the forest from Little Red Riding Hood's home to grandmother's cottage.">
+            <svg class="map-drawing" viewBox="0 0 1400 650" preserveAspectRatio="none" role="img" aria-label="A hand-drawn coded map showing Little Red Riding Hood's route from home, through the forest and flowers, to grandmother's cottage.">
             <defs>
               <linearGradient id="mapGround" x1="0" y1="0" x2="1" y2="1">
                 <stop offset="0" stop-color="#dce9bd"></stop>
@@ -242,17 +243,18 @@
 
             <path d="M18 20 H1382 V630 H18z" fill="none" stroke="#f6ecc6" stroke-width="7" opacity="0.6"></path>
             <path d="M28 30 H1372 V620 H28z" fill="none" stroke="#536d47" stroke-width="2" opacity="0.28"></path>
-          </svg>
-          <div class="route-glow" aria-hidden="true"></div>
-          <button class="node home-node is-unlocked" data-node="home" style="left: 16.2%; top: 85.6%;" aria-label="Read: Home"></button>
-          <button class="node forest-node" data-node="forest" style="left: 29.8%; top: 80.4%;" aria-label="Read: Forest path"></button>
-          <button class="node flowers-node" data-node="flowers" style="left: 53.2%; top: 68.4%;" aria-label="Read: Flower clearing"></button>
-          <button class="node wolf-node" data-node="wolf" style="left: 73%; top: 49.6%;" aria-label="Read: Wolf encounter"></button>
-          <button class="node cottage-node" data-node="cottage" style="left: 84.5%; top: 31.9%;" aria-label="Read: Grandmother's cottage"></button>
+            </svg>
+            <div class="route-glow" aria-hidden="true"></div>
+            <button class="node home-node is-unlocked" data-node="home" style="left: 16.2%; top: 85.6%;" aria-label="Read: Home"></button>
+            <button class="node forest-node" data-node="forest" style="left: 29.8%; top: 80.4%;" aria-label="Read: Forest path"></button>
+            <button class="node flowers-node" data-node="flowers" style="left: 53.2%; top: 68.4%;" aria-label="Read: Flower clearing"></button>
+            <button class="node wolf-node" data-node="wolf" style="left: 73%; top: 49.6%;" aria-label="Read: Wolf encounter"></button>
+            <button class="node cottage-node" data-node="cottage" style="left: 84.5%; top: 31.9%;" aria-label="Read: Grandmother's cottage"></button>
 
-          <div id="rider" class="rider" aria-hidden="true">
-            <div class="rider-body">
-              <img class="rider-sprite" src="assets/red-riding-hood.png" alt="">
+            <div id="rider" class="rider" aria-hidden="true">
+              <div class="rider-body">
+                <img class="rider-sprite" src="assets/red-riding-hood.png" alt="">
+              </div>
             </div>
           </div>
 
