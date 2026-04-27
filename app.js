@@ -134,6 +134,8 @@ let lastFrame = performance.now();
 let mapActive = false;
 let musicEnabled = false;
 const audioFades = new Map();
+const musicCrossfadeMs = 2800;
+const musicStopFadeMs = 1500;
 
 function setRiderPosition() {
   rider.style.left = `${position.x}%`;
@@ -328,19 +330,21 @@ function fadeAudio(audio, targetVolume, duration = 1100, resetWhenSilent = false
 
   const startVolume = audio.volume;
   const startTime = performance.now();
+  const clampedTarget = clamp(targetVolume, 0, 1);
 
   function step(now) {
-    const progress = Math.min((now - startTime) / duration, 1);
-    audio.volume = clamp(startVolume + (targetVolume - startVolume) * progress, 0, 1);
+    const rawProgress = Math.min((now - startTime) / duration, 1);
+    const progress = rawProgress * rawProgress * (3 - 2 * rawProgress);
+    audio.volume = clamp(startVolume + (clampedTarget - startVolume) * progress, 0, 1);
 
-    if (progress < 1) {
+    if (rawProgress < 1) {
       audioFades.set(audio, requestAnimationFrame(step));
       return;
     }
 
     audioFades.delete(audio);
-    audio.volume = targetVolume;
-    if (targetVolume === 0) {
+    audio.volume = clampedTarget;
+    if (clampedTarget === 0) {
       audio.pause();
       if (resetWhenSilent) audio.currentTime = 0;
     }
@@ -359,10 +363,17 @@ function playTrack(track) {
   if (!musicEnabled) return;
   const otherTrack = track === safeBgm ? dangerBgm : safeBgm;
   const targetVolume = track === dangerBgm ? 0.34 : 0.42;
-  fadeAudio(otherTrack, 0, 1000, true);
-  if (track.paused) track.volume = 0;
+
+  if (!otherTrack.paused || otherTrack.volume > 0) {
+    fadeAudio(otherTrack, 0, musicCrossfadeMs, true);
+  }
+
+  if (track.paused) {
+    track.volume = 0;
+  }
+
   track.play().then(() => {
-    fadeAudio(track, targetVolume, 1200);
+    fadeAudio(track, targetVolume, musicCrossfadeMs);
   }).catch(() => {
     musicEnabled = false;
     syncMusicToggle();
@@ -379,8 +390,8 @@ function updateMusicForScene(id) {
 }
 
 function stopAllMusic() {
-  fadeAudio(safeBgm, 0, 900, true);
-  fadeAudio(dangerBgm, 0, 900, true);
+  fadeAudio(safeBgm, 0, musicStopFadeMs, true);
+  fadeAudio(dangerBgm, 0, musicStopFadeMs, true);
 }
 
 function setMusicEnabled(enabled) {
