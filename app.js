@@ -134,7 +134,11 @@ let lastFrame = performance.now();
 let mapActive = false;
 let musicEnabled = false;
 const audioFades = new Map();
-const musicCrossfadeMs = 2800;
+let currentBgm = null;
+let musicTransitionTimer = null;
+const musicFadeOutMs = 950;
+const musicFadeInMs = 1250;
+const musicQuietGapMs = 120;
 const musicStopFadeMs = 1500;
 
 function setRiderPosition() {
@@ -353,6 +357,26 @@ function fadeAudio(audio, targetVolume, duration = 1100, resetWhenSilent = false
   audioFades.set(audio, requestAnimationFrame(step));
 }
 
+function clearMusicTransition() {
+  if (!musicTransitionTimer) return;
+  clearTimeout(musicTransitionTimer);
+  musicTransitionTimer = null;
+}
+
+function startTrack(track, targetVolume, duration = musicFadeInMs) {
+  if (track.paused) {
+    track.volume = 0;
+  }
+
+  track.play().then(() => {
+    fadeAudio(track, targetVolume, duration);
+  }).catch(() => {
+    musicEnabled = false;
+    currentBgm = null;
+    syncMusicToggle();
+  });
+}
+
 function syncMusicToggle() {
   musicToggleButton.setAttribute("aria-pressed", String(musicEnabled));
   musicToggleButton.setAttribute("aria-label", musicEnabled ? "Turn music off" : "Turn music on");
@@ -361,23 +385,30 @@ function syncMusicToggle() {
 
 function playTrack(track) {
   if (!musicEnabled) return;
+  clearMusicTransition();
+
   const otherTrack = track === safeBgm ? dangerBgm : safeBgm;
-  const targetVolume = track === dangerBgm ? 0.34 : 0.42;
+  const targetVolume = track === dangerBgm ? 0.24 : 0.36;
+  const previousTrack = currentBgm && currentBgm !== track ? currentBgm : otherTrack;
+  const previousTrackIsAudible = !previousTrack.paused && previousTrack.volume > 0.02;
 
-  if (!otherTrack.paused || otherTrack.volume > 0) {
-    fadeAudio(otherTrack, 0, musicCrossfadeMs, true);
+  if (currentBgm === track && !track.paused) {
+    fadeAudio(track, targetVolume, 1200);
+    return;
   }
 
-  if (track.paused) {
-    track.volume = 0;
+  currentBgm = track;
+
+  if (previousTrackIsAudible) {
+    fadeAudio(previousTrack, 0, musicFadeOutMs, true);
+    musicTransitionTimer = setTimeout(() => {
+      musicTransitionTimer = null;
+      startTrack(track, targetVolume, musicFadeInMs);
+    }, musicFadeOutMs + musicQuietGapMs);
+    return;
   }
 
-  track.play().then(() => {
-    fadeAudio(track, targetVolume, musicCrossfadeMs);
-  }).catch(() => {
-    musicEnabled = false;
-    syncMusicToggle();
-  });
+  startTrack(track, targetVolume, 900);
 }
 
 function playSafeBgm() {
@@ -390,6 +421,8 @@ function updateMusicForScene(id) {
 }
 
 function stopAllMusic() {
+  clearMusicTransition();
+  currentBgm = null;
   fadeAudio(safeBgm, 0, musicStopFadeMs, true);
   fadeAudio(dangerBgm, 0, musicStopFadeMs, true);
 }
