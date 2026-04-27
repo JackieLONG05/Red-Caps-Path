@@ -1,6 +1,7 @@
 const intro = document.getElementById("intro");
 const mapScreen = document.getElementById("mapScreen");
 const map = document.getElementById("map");
+const mapWorld = document.getElementById("mapWorld");
 const rider = document.getElementById("rider");
 const overlay = document.getElementById("readingOverlay");
 const musicPrompt = document.getElementById("musicPrompt");
@@ -137,6 +138,26 @@ const audioFades = new Map();
 function setRiderPosition() {
   rider.style.left = `${position.x}%`;
   rider.style.top = `${position.y}%`;
+  updateCamera();
+}
+
+function updateCamera() {
+  if (!mapWorld) return;
+
+  const viewport = map.getBoundingClientRect();
+  const world = mapWorld.getBoundingClientRect();
+  if (world.width <= viewport.width && world.height <= viewport.height) {
+    mapWorld.style.setProperty("--camera-x", "0px");
+    mapWorld.style.setProperty("--camera-y", "0px");
+    return;
+  }
+
+  const riderX = (position.x / 100) * world.width;
+  const riderY = (position.y / 100) * world.height;
+  const targetX = clamp(viewport.width / 2 - riderX, viewport.width - world.width, 0);
+  const targetY = clamp(viewport.height / 2 - riderY, viewport.height - world.height, 0);
+  mapWorld.style.setProperty("--camera-x", `${targetX}px`);
+  mapWorld.style.setProperty("--camera-y", `${targetY}px`);
 }
 
 function dismissMusicPrompt() {
@@ -258,7 +279,7 @@ function setupNodeEditor() {
       button.setPointerCapture(event.pointerId);
 
       function moveNode(pointerEvent) {
-        const rect = map.getBoundingClientRect();
+        const rect = mapWorld.getBoundingClientRect();
         const x = ((pointerEvent.clientX - rect.left) / rect.width) * 100;
         const y = ((pointerEvent.clientY - rect.top) / rect.height) * 100;
         setNodePosition(id, x, y, id === "home");
@@ -479,7 +500,7 @@ function move(delta) {
   velocity.x += joystickVector.x;
   velocity.y += joystickVector.y;
 
-  const rect = map.getBoundingClientRect();
+  const rect = mapWorld.getBoundingClientRect();
   const visualX = velocity.x * rect.width;
   const visualY = velocity.y * rect.height;
   const visualLength = Math.hypot(visualX, visualY) || 1;
@@ -581,6 +602,8 @@ window.addEventListener("keydown", (event) => {
 window.addEventListener("keyup", (event) => {
   keys.delete(event.key.toLowerCase());
 });
+
+window.addEventListener("resize", updateCamera);
 
 applySavedNodePositions();
 setupNodeEditor();
