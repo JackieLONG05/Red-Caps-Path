@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Little Red Riding Hood - Map Edition</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23a83236'/%3E%3Cpath d='M32 10 48 54H16z' fill='%23fff6df'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="publication" aria-live="polite">
+      <section id="intro" class="scene scene-home is-active" aria-labelledby="intro-title">
+        <div class="scene-art home-art" aria-hidden="true">
+          <div class="window"></div>
+          <div class="hearth"></div>
+          <div class="basket"></div>
+        </div>
+        <article class="story-card intro-card">
+          <p class="kicker">A map-based digital edition</p>
+          <h1 id="intro-title">Little Red Riding Hood</h1>
+          <p>
+            There was once a sweet little maid who lived with her father and
+            mother in a pretty little cottage at the edge of the village.
+          </p>
+          <p>
+            One morning her mother asked her to take a basket of dainties to
+            her grandmother, who lived at the further end of the wood.
+          </p>
+          <button id="beginButton" class="primary-button" type="button">
+            Begin the walk
+          </button>
+        </article>
+      </section>
+
+      <section id="musicPrompt" class="music-prompt is-active" aria-labelledby="music-title" role="dialog" aria-modal="true">
+        <article class="music-card">
+          <p class="kicker">Soundtrack option</p>
+          <h2 id="music-title">Turn on the music?</h2>
+          <p>
+            For a better reading experience, this edition includes a gentle
+            background score for the safe parts of the journey.
+          </p>
+          <div class="music-actions">
+            <button id="enableMusicButton" class="primary-button" type="button">Turn on music</button>
+            <button id="skipMusicButton" class="secondary-button" type="button">No thanks</button>
+          </div>
+        </article>
+      </section>
+
+      <section id="mapScreen" class="map-screen" aria-labelledby="map-title" aria-hidden="true">
+        <header class="map-header">
+          <div>
+            <p class="kicker">Interactive reading path</p>
+            <h2 id="map-title">Follow the road through the wood</h2>
+          </div>
+        </header>
+
+        <div id="map" class="map" tabindex="0" aria-label="Forest map. Use arrow keys or WASD to move Little Red Riding Hood.">
+          <img class="map-image" src="assets/forest-map.png" alt="A single winding road through the forest from Little Red Riding Hood's home to grandmother's cottage.">
+          <svg class="map-drawing" viewBox="0 0 1400 650" preserveAspectRatio="none" role="img" aria-label="A hand-drawn coded map showing Little Red Riding Hood's route from home, through the forest and flowers, to grandmother's cottage.">
+            <defs>
+              <linearGradient id="mapGround" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#dce9bd"></stop>
+                <stop offset="0.52" stop-color="#abc77f"></stop>
+                <stop offset="1" stop-color="#6f8e5a"></stop>
+              </linearGradient>
+              <linearGradient id="darkWood" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#3d6047"></stop>
+                <stop offset="1" stop-color="#1e332b"></stop>
+              </linearGradient>
+              <linearGradient id="pathDust" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#fff1bf"></stop>
+                <stop offset="1" stop-color="#d6af72"></stop>
+              </linearGradient>
+              <linearGradient id="water" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#6e9f9d"></stop>
+                <stop offset="0.5" stop-color="#b9ded0"></stop>
+                <stop offset="1" stop-color="#5b8888"></stop>
+              </linearGradient>
+              <filter id="softMapShadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#233125" flood-opacity="0.24"></feDropShadow>
+              </filter>
+              <filter id="paperGrain">
+                <feTurbulence type="fractalNoise" baseFrequency="0.022" numOctaves="3" seed="8" result="noise"></feTurbulence>
+                <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0.2 0 0 0 0 0.18 0 0 0 0 0.1 0 0 0 0.13 0"></feColorMatrix>
+                <feBlend in="SourceGraphic" mode="multiply"></feBlend>
+              </filter>
+
+              <symbol id="pineTree" viewBox="-24 -70 48 80">
+                <path d="M-4 -3 h8 v13 h-8z" fill="#5c422d"></path>
+                <path d="M0 -70 L24 -26 H10 L22 0 H-22 L-10 -26 H-24z" fill="#243f32"></path>
+                <path d="M0 -58 L15 -30 H5 L15 -9 H-15 L-5 -30 H-15z" fill="#355b43"></path>
+              </symbol>
+              <symbol id="roundTree" viewBox="-35 -75 70 90">
+                <path d="M-5 -10 h10 v25 h-10z" fill="#6d4b30"></path>
+                <circle cx="-12" cy="-42" r="22" fill="#507447"></circle>
+                <circle cx="9" cy="-49" r="25" fill="#628956"></circle>
+                <circle cx="18" cy="-25" r="20" fill="#456b43"></circle>
+                <circle cx="-20" cy="-22" r="18" fill="#6f965d"></circle>
+              </symbol>
+              <symbol id="flowerDot" viewBox="-8 -8 16 16">
+                <circle cx="0" cy="-4" r="3" fill="#fff5bf"></circle>
+                <circle cx="4" cy="0" r="3" fill="#e35f5f"></circle>
+                <circle cx="0" cy="4" r="3" fill="#f3d56b"></circle>
+                <circle cx="-4" cy="0" r="3" fill="#f2a5b6"></circle>
+                <circle cx="0" cy="0" r="2" fill="#7b6432"></circle>
+              </symbol>
+              <symbol id="stone" viewBox="-18 -12 36 24">
+                <path d="M-16 4 C-11 -12 11 -14 17 2 C12 12 -7 14 -16 4z" fill="#8f9582"></path>
+                <path d="M-8 -4 C-1 -9 8 -7 13 0" fill="none" stroke="#bdc0ae" stroke-width="2" opacity="0.55"></path>
+              </symbol>
+            </defs>
+
+            <rect width="1400" height="650" rx="36" fill="url(#mapGround)"></rect>
+            <path d="M0 0 H1400 V650 H0z" fill="#f8efcf" opacity="0.1" filter="url(#paperGrain)"></path>
+            <path d="M0 100 C140 35 288 72 392 22 C548 -54 704 72 824 36 C1010 -20 1164 20 1400 8 V0 H0z" fill="#eff3cf" opacity="0.42"></path>
+            <path d="M0 650 V490 C145 418 246 460 366 396 C492 329 625 376 740 330 C870 278 985 305 1106 250 C1225 195 1308 210 1400 158 V650z" fill="#839f62" opacity="0.56"></path>
+            <path d="M914 188 C1012 142 1182 136 1400 165 V650 H900 C852 524 846 292 914 188z" fill="url(#darkWood)" opacity="0.95"></path>
+            <path d="M286 38 C276 106 326 154 288 216 C248 282 298 332 250 398" fill="none" stroke="#4e756d" stroke-width="25" stroke-linecap="round" opacity="0.4"></path>
+            <path d="M288 34 C280 111 327 150 290 216 C250 281 300 328 252 398" fill="none" stroke="url(#water)" stroke-width="13" stroke-linecap="round"></path>
+            <path d="M284 70 C292 90 302 104 292 126 M282 196 C268 218 270 238 256 257 M278 315 C292 331 291 349 276 368" fill="none" stroke="#d7efe2" stroke-width="3" stroke-linecap="round" opacity="0.8"></path>
+
+            <path class="route-shadow" d="M154 520 C256 487 300 424 434 384 C558 347 566 274 714 262 C838 250 854 345 994 352 C1124 358 1134 199 1260 141"></path>
+            <path class="route" d="M154 520 C256 487 300 424 434 384 C558 347 566 274 714 262 C838 250 854 345 994 352 C1124 358 1134 199 1260 141"></path>
+            <path d="M175 513 C270 482 307 425 438 388 C559 354 574 280 710 267 C832 255 852 351 996 359 C1120 366 1135 205 1246 148" fill="none" stroke="#f9e6aa" stroke-width="9" stroke-linecap="round" stroke-dasharray="2 30" opacity="0.74"></path>
+
+            <g class="map-forest back-forest" opacity="0.96">
+              <use href="#roundTree" x="52" y="132" width="78" height="100"></use>
+              <use href="#roundTree" x="112" y="108" width="84" height="108"></use>
+              <use href="#roundTree" x="184" y="126" width="86" height="110"></use>
+              <use href="#roundTree" x="356" y="120" width="90" height="116"></use>
+              <use href="#roundTree" x="462" y="104" width="82" height="106"></use>
+              <use href="#roundTree" x="560" y="120" width="86" height="110"></use>
+              <use href="#roundTree" x="672" y="86" width="92" height="118"></use>
+              <use href="#roundTree" x="790" y="112" width="78" height="100"></use>
+              <use href="#pineTree" x="1020" y="236" width="84" height="116"></use>
+              <use href="#pineTree" x="1100" y="245" width="94" height="130"></use>
+              <use href="#pineTree" x="1190" y="226" width="106" height="145"></use>
+              <use href="#pineTree" x="1300" y="260" width="94" height="130"></use>
+            </g>
+
+            <g class="home-landmark" filter="url(#softMapShadow)">
+              <path d="M48 520 L142 438 L240 520 V624 H48z" fill="#efd6a0"></path>
+              <path d="M28 520 L142 418 L258 520" fill="none" stroke="#8f3c2c" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"></path>
+              <path d="M72 510 H215 V624 H72z" fill="#f4dfb4"></path>
+              <rect x="132" y="558" width="34" height="66" rx="16" fill="#714b34"></rect>
+              <rect x="88" y="536" width="30" height="30" rx="8" fill="#ffd67d" stroke="#7b5637" stroke-width="5"></rect>
+              <rect x="184" y="532" width="30" height="32" rx="8" fill="#ffd67d" stroke="#7b5637" stroke-width="5"></rect>
+              <path d="M80 444 C74 414 92 396 76 370" fill="none" stroke="#e9e3ca" stroke-width="11" stroke-linecap="round" opacity="0.76"></path>
+            </g>
+
+            <g class="fences" stroke="#876b43" stroke-width="7" stroke-linecap="round" opacity="0.85">
+              <path d="M236 610 C288 582 344 578 390 598" fill="none"></path>
+              <path d="M254 596 V628 M298 586 V620 M344 588 V620 M386 602 V630"></path>
+              <path d="M1160 156 C1214 184 1280 182 1344 150" fill="none"></path>
+              <path d="M1176 160 V198 M1230 176 V208 M1290 172 V204 M1334 150 V184"></path>
+            </g>
+
+            <g class="flower-clearing">
+              <ellipse cx="704" cy="288" rx="185" ry="92" fill="#d9dea4" opacity="0.55"></ellipse>
+              <path d="M574 270 C626 206 748 196 836 252 C792 328 640 344 574 270z" fill="#e7e4a8" opacity="0.44"></path>
+              <use href="#flowerDot" x="574" y="286" width="18" height="18"></use>
+              <use href="#flowerDot" x="620" y="250" width="20" height="20"></use>
+              <use href="#flowerDot" x="658" y="302" width="16" height="16"></use>
+              <use href="#flowerDot" x="706" y="238" width="22" height="22"></use>
+              <use href="#flowerDot" x="744" y="286" width="18" height="18"></use>
+              <use href="#flowerDot" x="796" y="262" width="16" height="16"></use>
+              <use href="#flowerDot" x="832" y="306" width="18" height="18"></use>
+              <use href="#flowerDot" x="636" y="328" width="18" height="18"></use>
+              <use href="#flowerDot" x="760" y="330" width="20" height="20"></use>
+              <use href="#flowerDot" x="704" y="286" width="18" height="18"></use>
+              <use href="#flowerDot" x="720" y="314" width="16" height="16"></use>
+              <use href="#flowerDot" x="690" y="260" width="16" height="16"></use>
+            </g>
+
+            <g class="stones" opacity="0.8">
+              <use href="#stone" x="350" y="384" width="42" height="28"></use>
+              <use href="#stone" x="408" y="414" width="34" height="24"></use>
+              <use href="#stone" x="514" y="316" width="38" height="25"></use>
+              <use href="#stone" x="930" y="418" width="46" height="30"></use>
+              <use href="#stone" x="1068" y="378" width="42" height="28"></use>
+              <use href="#stone" x="1162" y="500" width="58" height="34"></use>
+              <use href="#stone" x="1260" y="404" width="36" height="24"></use>
+            </g>
+
+            <g class="wolf-zone" transform="translate(970 424)" filter="url(#softMapShadow)">
+              <path class="wolf-tail" d="M-86 4 C-126 -24 -128 -62 -88 -42 C-64 -30 -52 -12 -42 4"></path>
+              <path class="wolf-body" d="M-58 -8 C-28 -38 36 -38 74 -8 C96 10 88 44 52 55 C6 68 -48 56 -70 26 C-78 14 -74 2 -58 -8z"></path>
+              <path class="wolf-head" d="M58 -20 L92 -64 L100 -24 L138 -16 L105 6 L122 34 L78 26 L60 2z"></path>
+              <path class="wolf-legs" d="M-28 44 l-12 48 M8 48 l-4 48 M48 42 l18 44"></path>
+              <circle cx="98" cy="-11" r="5" fill="#f3ca65"></circle>
+            </g>
+
+            <g class="cottage-landmark" filter="url(#softMapShadow)">
+              <path d="M1192 124 L1260 68 L1328 124 V206 H1192z" fill="#f2dfb5"></path>
+              <path d="M1178 124 L1260 52 L1342 124" fill="none" stroke="#687650" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"></path>
+              <rect x="1242" y="154" width="32" height="52" rx="15" fill="#624b39"></rect>
+              <rect x="1208" y="134" width="28" height="28" rx="8" fill="#ffd986" stroke="#69543d" stroke-width="5"></rect>
+              <rect x="1288" y="134" width="28" height="28" rx="8" fill="#ffd986" stroke="#69543d" stroke-width="5"></rect>
+            </g>
+
+            <g class="map-forest front-forest">
+              <use href="#pineTree" x="402" y="490" width="70" height="96"></use>
+              <use href="#pineTree" x="910" y="534" width="92" height="126"></use>
+              <use href="#pineTree" x="1034" y="516" width="118" height="158"></use>
+              <use href="#pineTree" x="1148" y="502" width="106" height="146"></use>
+              <use href="#pineTree" x="1262" y="468" width="122" height="166"></use>
+            </g>
+
+            <g class="map-details">
+              <g class="grass-blades">
+                <path d="M360 480 l-8 -18 M374 482 l6 -21 M392 472 l-2 -18 M620 374 l-10 -18 M638 370 l8 -20 M852 212 l-4 -19 M872 214 l8 -18"></path>
+                <path d="M108 350 l-6 -20 M126 350 l12 -18 M310 248 l-6 -18 M334 246 l10 -16 M1186 246 l-4 -18 M1208 250 l12 -20"></path>
+                <path d="M512 522 l-8 -17 M528 518 l8 -16 M724 430 l-6 -17 M742 426 l9 -15 M1326 420 l-8 -20"></path>
+              </g>
+              <g class="trail-stones">
+                <circle cx="214" cy="500" r="6"></circle>
+                <circle cx="254" cy="482" r="5"></circle>
+                <circle cx="314" cy="454" r="6"></circle>
+                <circle cx="498" cy="356" r="5"></circle>
+                <circle cx="536" cy="336" r="6"></circle>
+                <circle cx="864" cy="326" r="5"></circle>
+                <circle cx="908" cy="340" r="6"></circle>
+                <circle cx="1168" cy="238" r="5"></circle>
+              </g>
+              <g class="mushrooms">
+                <path d="M68 472 C78 454 102 454 112 472z M86 472 v20"></path>
+                <path d="M230 390 C238 376 258 376 268 390z M250 390 v18"></path>
+                <path d="M1120 568 C1130 550 1155 550 1165 568z M1142 568 v22"></path>
+              </g>
+              <g class="tiny-flowers">
+                <circle cx="96" cy="540" r="4"></circle><circle cx="118" cy="526" r="3"></circle><circle cx="342" cy="518" r="4"></circle>
+                <circle cx="594" cy="288" r="4"></circle><circle cx="646" cy="232" r="3"></circle><circle cx="790" cy="312" r="4"></circle>
+                <circle cx="834" cy="262" r="3"></circle><circle cx="1238" cy="178" r="4"></circle><circle cx="1298" cy="192" r="3"></circle>
+              </g>
+              <g class="forest-sign" filter="url(#softMapShadow)">
+                <path d="M404 382 v64"></path>
+                <path d="M374 386 h76 l-13 23 h-63z"></path>
+                <path d="M421 386 l28 -22"></path>
+              </g>
+            </g>
+
+            <path d="M18 20 H1382 V630 H18z" fill="none" stroke="#f6ecc6" stroke-width="7" opacity="0.6"></path>
+            <path d="M28 30 H1372 V620 H28z" fill="none" stroke="#536d47" stroke-width="2" opacity="0.28"></path>
+          </svg>
+          <div class="route-glow" aria-hidden="true"></div>
+          <button class="node home-node is-unlocked" data-node="home" style="left: 16.2%; top: 85.6%;" aria-label="Read: Home"></button>
+          <button class="node forest-node" data-node="forest" style="left: 29.8%; top: 80.4%;" aria-label="Read: Forest path"></button>
+          <button class="node flowers-node" data-node="flowers" style="left: 53.2%; top: 68.4%;" aria-label="Read: Flower clearing"></button>
+          <button class="node wolf-node" data-node="wolf" style="left: 73%; top: 49.6%;" aria-label="Read: Wolf encounter"></button>
+          <button class="node cottage-node" data-node="cottage" style="left: 84.5%; top: 31.9%;" aria-label="Read: Grandmother's cottage"></button>
+
+          <div id="rider" class="rider" aria-hidden="true">
+            <div class="rider-body">
+              <img class="rider-sprite" src="assets/red-riding-hood.png" alt="">
+            </div>
+          </div>
+
+          <div class="route-hint">
+            <span>WASD / arrows</span>
+            <span>Move to glowing story points</span>
+          </div>
+
+          <div id="completionCard" class="completion-card" aria-hidden="true">
+            <strong>Story complete</strong>
+            <span>Little Red-Cap has returned safely. You can revisit unlocked scenes from the map.</span>
+          </div>
+
+          <aside id="nodeEditor" class="node-editor" hidden>
+            <strong>Node editor</strong>
+            <span>Drag story points on the map. Saved positions stay in this browser.</span>
+            <div class="node-editor-actions">
+              <button id="saveNodesButton" type="button">Save</button>
+              <button id="copyNodesButton" type="button">Copy</button>
+              <button id="resetNodesButton" type="button">Reset</button>
+            </div>
+            <textarea id="nodeOutput" readonly aria-label="Node coordinates output"></textarea>
+          </aside>
+        </div>
+
+        <div id="joystick" class="joystick" aria-label="Mobile movement control">
+          <div id="stick" class="stick"></div>
+        </div>
+      </section>
+
+      <button id="musicToggleButton" class="music-toggle" type="button" aria-pressed="false" aria-label="Turn music on">
+        <span class="music-toggle-icon" aria-hidden="true">♪</span>
+        <span id="musicToggleText">Music off</span>
+      </button>
+
+      <section id="readingOverlay" class="reading-overlay" aria-hidden="true">
+        <div class="reading-backdrop"></div>
+        <article class="reading-panel" tabindex="-1">
+          <div id="nodeIllustration" class="node-illustration" aria-hidden="true"></div>
+          <p id="nodeLabel" class="kicker"></p>
+          <h2 id="nodeTitle"></h2>
+          <div id="nodeText" class="node-text"></div>
+          <div class="reading-actions">
+            <button id="continueButton" class="primary-button" type="button">Continue</button>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <audio id="safeBgm" src="assets/redcap-safe.mp3" preload="auto" loop></audio>
+    <audio id="dangerBgm" src="assets/redcap-danger.mp3" preload="auto" loop></audio>
+
+    <script src="app.js"></script>
+  </body>
+</html>
