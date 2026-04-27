@@ -336,15 +336,22 @@ h1 {
 .map {
   position: relative;
   align-self: center;
-  width: min(1620px, calc(100vw - 1.2rem));
-  height: min(78svh, 820px);
-  min-height: 520px;
+  width: min(1620px, calc(100vw - 1.2rem), calc(78svh * 2.1375));
+  aspect-ratio: 1834 / 858;
   margin: 0 auto;
   border-radius: 34px;
   overflow: hidden;
   border: 1px solid rgba(255, 247, 224, 0.56);
   background: #789164;
   box-shadow: 0 34px 100px rgba(26, 39, 30, 0.38);
+}
+
+.map-world {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  transform: translate3d(var(--camera-x, 0px), var(--camera-y, 0px), 0);
+  transform-origin: left top;
 }
 
 .map::after {
@@ -1041,15 +1048,29 @@ h1 {
     gap: 0.55rem;
   }
 
+  .map-header {
+    display: none;
+  }
+
   .map-header h2 {
     font-size: 1.75rem;
   }
 
   .map {
     width: calc(100vw - 1.4rem);
-    height: calc(100svh - 8.2rem);
+    height: calc(100svh - 1.4rem);
+    aspect-ratio: auto;
     min-height: 0;
     border-radius: 24px;
+  }
+
+  .map-world {
+    width: max(1040px, calc((100svh - 1.4rem) * 2.1375));
+    height: max(486px, calc(100svh - 1.4rem));
+  }
+
+  .map-image {
+    object-fit: fill;
   }
 
   .map-drawing {
@@ -1067,9 +1088,15 @@ h1 {
   }
 
   .route-hint {
-    right: 1rem;
-    bottom: 7.4rem;
-    max-width: calc(100% - 8.5rem);
+    left: 0.7rem;
+    right: auto;
+    top: 0.7rem;
+    bottom: auto;
+    justify-content: flex-start;
+    max-width: min(58vw, 280px);
+    font-size: 0.66rem;
+    transform: none;
+    opacity: 0.86;
   }
 
   .completion-card {
@@ -1105,6 +1132,11 @@ h1 {
 
   .joystick {
     display: block;
+    left: 1rem;
+    right: auto;
+    bottom: 1rem;
+    width: 92px;
+    height: 92px;
   }
 }
 
